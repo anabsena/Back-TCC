@@ -15,6 +15,7 @@ model Project {
   projectCategory   ProjectCategory @relation(fields: [projectCategoryId], references: [id])
   ProjectPhotos     ProjectPhotos[]
   projectCategoryId String
+
   @@map("projcts")
 }
 
@@ -22,7 +23,7 @@ model ProjectPhotos {
   id        String  @id @default(uuid())
   projectId String
   project   Project @relation(fields: [projectId], references: [id])
-  photos String
+  photos    Bytes
 }
 
 model ProjectCategory {

@@ -13,5 +13,5 @@ export class UpdatePhotoDto{
         description: "foto",
         required: false
     })
-    photos?: string;
+    photos?: Express.Multer.File;
 } 
