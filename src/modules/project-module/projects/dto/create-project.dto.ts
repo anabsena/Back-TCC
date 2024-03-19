@@ -23,10 +23,4 @@ export class createProjectDto {
     })
     especificDetails: string;
 
-    @ApiProperty({
-        example: "https://images.unsplash.com",
-        description: "Fotos do projeto",
-        required: true
-    })
-    photos: string[];
 } 

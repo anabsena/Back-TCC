@@ -20,10 +20,4 @@ export class UpdateProjectDto{
         required: false
     })
     especificDetails?: string;
-  @ApiProperty({
-    example: "https://images.unsplash.com/",
-    description: "Fotos do projeto",
-    required: false
-})
-    photos?: string[];
 } 

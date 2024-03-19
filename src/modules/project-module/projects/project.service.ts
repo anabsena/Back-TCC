@@ -13,7 +13,7 @@ export class ProjectService {
     constructor (private prisma: PrismaService){}
     async create(createProjectDto: createProjectDto): Promise<ProjectResponse> {
         try{
-            const {name, description, especificDetails, photos} = createProjectDto
+            const {name, description, especificDetails} = createProjectDto
             const projectExists = await this.prisma.project.findFirst({
                 where: {
                     name: createProjectDto.name
@@ -27,7 +27,7 @@ export class ProjectService {
                     name: name,
                     description: description,
                     especificDetails: especificDetails,
-                    photos: photos,
+                    projectCategoryId: '',
                 },
             });
             const projectResponse: ProjectResponse = {
@@ -35,7 +35,6 @@ export class ProjectService {
                 name: newProject.name,
                 description: newProject.description,
                 especificDetails: newProject.especificDetails,
-                photos: newProject.photos,
             };
     
             return projectResponse;
@@ -44,7 +43,7 @@ export class ProjectService {
             throw new ConflictException(`Error creating Project: ${error}`);
         }
     }
-    async findAll(name: string, description: string, especificDetails: string, photos: string[], page?: number,
+    async findAll(name: string, description: string, especificDetails: string, page?: number,
         perPage?: number, ): Promise<ProjectsResponse> {
             try {
                 const where: Prisma.ProjectWhereInput = {}
@@ -95,7 +94,7 @@ export class ProjectService {
         UpdateProjectDto: UpdateProjectDto,
     ): Promise<ProjectResponse>{
         try{
-            const {name, description, especificDetails, photos} = UpdateProjectDto
+            const {name, description, especificDetails} = UpdateProjectDto
             const projectExists = await this.findOne(id);
             if(!projectExists){
                 throw new NotFoundException('Product not found');
@@ -108,7 +107,6 @@ export class ProjectService {
                     name: name ? name : projectExists.name,
                     description: description ? description : projectExists.description,
                     especificDetails: especificDetails ? especificDetails : projectExists.especificDetails,
-                    photos: photos ? photos : projectExists.photos,
                 },
             });
             return updatedProject

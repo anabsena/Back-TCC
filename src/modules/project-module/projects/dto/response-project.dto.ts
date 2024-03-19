@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
+import { ResponsePhotoDto } from "../../project-photo/dto/response-photo.dto";
 
 
 export class ResponseProjectDto{
@@ -22,9 +23,8 @@ export class ResponseProjectDto{
         description: "Detalhes do projeto"
     })
     especificDetails: string;
-  @ApiProperty({
-    example: "https://images.unsplash.com/",
-    description: "Fotos do projeto"
-})
-    photos: string[];
+    @ApiProperty({
+        type: () => [ResponsePhotoDto]
+    })
+    Photo?: ResponsePhotoDto[];
 } 

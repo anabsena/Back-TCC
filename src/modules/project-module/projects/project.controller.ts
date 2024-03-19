@@ -45,17 +45,15 @@ export class ProjectController {
   @ApiQuery({name:'perPage', required: false, example: '10'})
   @ApiQuery({name:'description', required: false, example: 'Projeto comercial para Jardim Alegre'})
   @ApiQuery({name:'especificDetails', required: false, example: '1 sala, 1 banheiro'})
-  @ApiQuery({name:'photos', required: false, example: 'https://images.unsplash.com/'})
   async findAll(
     @Query('name') name: string,
     @Query('page') page: number,
     @Query('perPage') perPage: number,
     @Query('description') description: string,
     @Query('especificDetails') especificDetails: string,
-    @Query('photos') photos: string[],
   ): Promise<ProjectsResponse>{
     try{
-      const response = await this.ProjectService.findAll(name, description, especificDetails, photos, page, perPage);
+      const response = await this.ProjectService.findAll(name, description, especificDetails, page, perPage);
 
       return response
     }catch(error){
