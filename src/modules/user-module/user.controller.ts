@@ -43,16 +43,14 @@ export class UserController {
   @ApiQuery({name:'name', required: false, example: 'Ana'})
   @ApiQuery({name:'page', required: false, example: '1'})
   @ApiQuery({name:'perPage', required: false, example: '10'})
-  @ApiQuery({name:'password', required: false, example: '1234'})
   async findAll(
     @Query('name') name: string,
     @Query('page') page: number,
     @Query('perPage') perPage: number,
-    @Query('password') password: string,
     
   ): Promise<UsersResponse>{
     try{
-      const response = await this.UserService.findAll(name, password, page, perPage);
+      const response = await this.UserService.findAll(name, page, perPage);
 
       return response
     }catch(error){

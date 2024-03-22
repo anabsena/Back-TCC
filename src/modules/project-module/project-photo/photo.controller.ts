@@ -52,7 +52,6 @@ export class PhotoController {
   }
   @Get('/photo')
   @ApiOperation({ summary: 'Get all photo' })
-
   @ApiResponse({ status: 200, type: PhotoResponse })
   @ApiBadRequestResponse({ description: 'bad request' })
   @ApiInternalServerErrorResponse({

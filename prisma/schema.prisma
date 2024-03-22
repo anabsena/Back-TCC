@@ -9,12 +9,14 @@ datasource db {
 
 model Project {
   id                String          @id @default(uuid())
+  userId            String
   name              String
   description       String
   especificDetails  String
+  projectCategoryId String
+  user              User?           @relation(fields: [userId], references: [id])
   projectCategory   ProjectCategory @relation(fields: [projectCategoryId], references: [id])
   ProjectPhotos     ProjectPhotos[]
-  projectCategoryId String
 
   @@map("projcts")
 }
@@ -33,7 +35,9 @@ model ProjectCategory {
 }
 
 model User {
-  id       String @id @default(uuid())
+  id       String    @id @default(uuid())
   name     String
+  email    String?   @unique
   password String
+  Project  Project[]
 }

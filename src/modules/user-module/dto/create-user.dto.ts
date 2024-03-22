@@ -15,4 +15,11 @@ export class createUserDto {
         required: true
     })
     password: string;    
+
+    @ApiProperty({
+        example: "example@test.com",
+        description: "Email",
+        required: true
+    })
+    email: string;   
 } 

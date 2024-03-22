@@ -1,19 +1,22 @@
-import { Body, ConflictException, Controller, Get, NotFoundException, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, NotFoundException, Param, Patch, Post, Query, UseGuards, Request } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { createProjectDto } from './dto/create-project.dto';
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProjectResponse, ProjectsResponse } from './dto/get-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { AuthUserGuard } from 'src/modules/auth-modules/auth/auth-user.guard';
 
 @ApiTags('Project')
 @Controller('project')
 
 export class ProjectController {
-  constructor(private ProjectService: ProjectService) {}
+  constructor(private ProjectService: ProjectService) { }
 
-  @Post('/project') 
+  @Post('/project')
+  @ApiBearerAuth()
+  @UseGuards(AuthUserGuard)
   @ApiOperation({ summary: 'Create a new project' })
-  
+
   @ApiCreatedResponse({
     description: 'The record has been successfully created.',
     type: ProjectResponse,
@@ -22,63 +25,69 @@ export class ProjectController {
   @ApiInternalServerErrorResponse({
     description: 'Internal Server Error response',
   })
-  async create(@Body() createProjectDto: createProjectDto ): Promise<ProjectResponse>{
-    try{
+  async create(@Request() req: any, @Body() createProjectDto: createProjectDto): Promise<ProjectResponse> {
+    try {
+      const userId = req.auth.user.id;
 
-      return this.ProjectService.create(createProjectDto);
-    }catch(error){
+      return this.ProjectService.create(userId, createProjectDto);
+    } catch (error) {
       console.log(`Error creating Project: ${error}`);
       throw new ConflictException(`Error creating Project: ${error}`);
     }
 
   }
-  @Get('/project') 
+  @Get('/project')
   @ApiOperation({ summary: 'Get all projects' })
-  
+
   @ApiResponse({ status: 200, type: ProjectsResponse })
+  @ApiBearerAuth()
+  @UseGuards(AuthUserGuard)
   @ApiBadRequestResponse({ description: 'bad request' })
   @ApiInternalServerErrorResponse({
     description: 'Internal Server Error response',
   })
-  @ApiQuery({name:'name', required: false, example: 'Comercial'})
-  @ApiQuery({name:'page', required: false, example: '1'})
-  @ApiQuery({name:'perPage', required: false, example: '10'})
-  @ApiQuery({name:'description', required: false, example: 'Projeto comercial para Jardim Alegre'})
-  @ApiQuery({name:'especificDetails', required: false, example: '1 sala, 1 banheiro'})
+  @ApiQuery({ name: 'name', required: false, example: 'Comercial' })
+  @ApiQuery({ name: 'page', required: false, example: '1' })
+  @ApiQuery({ name: 'perPage', required: false, example: '10' })
+  @ApiQuery({ name: 'description', required: false, example: 'Projeto comercial para Jardim Alegre' })
+  @ApiQuery({ name: 'especificDetails', required: false, example: '1 sala, 1 banheiro' })
   async findAll(
+    @Request() req: any,
     @Query('name') name: string,
     @Query('page') page: number,
     @Query('perPage') perPage: number,
     @Query('description') description: string,
     @Query('especificDetails') especificDetails: string,
-  ): Promise<ProjectsResponse>{
-    try{
+  ): Promise<ProjectsResponse> {
+    try {
       const response = await this.ProjectService.findAll(name, description, especificDetails, page, perPage);
 
       return response
-    }catch(error){
+    } catch (error) {
       console.error(error);
       throw new NotFoundException(error);
     }
 
   }
-  @Get('/project/:id') 
+  @Get('/project/:id')
   @ApiOperation({ summary: 'Get all projects' })
-  
+  @ApiBearerAuth()
+  @UseGuards(AuthUserGuard)
   @ApiResponse({ status: 200, type: ProjectsResponse })
   @ApiBadRequestResponse({ description: 'bad request' })
   @ApiInternalServerErrorResponse({
     description: 'Internal Server Error response',
   })
-  @ApiParam({name: 'id', example: 123, description: 'project id'})
+  @ApiParam({ name: 'id', example: 123, description: 'project id' })
   async findOne(
-   @Param('id') id: string
-  ): Promise<ProjectResponse>{
-    try{
+    @Request() req: any,
+    @Param('id') id: string
+  ): Promise<ProjectResponse> {
+    try {
       const response = await this.ProjectService.findOne(id);
 
       return response
-    }catch(error){
+    } catch (error) {
       console.log(`Error finding Project: ${error}`);
       throw new NotFoundException(`Error finding Project: ${error}`);
     }
@@ -87,21 +96,24 @@ export class ProjectController {
   @Patch('/project/:id')
   @ApiOperation({ summary: 'Update a project' })
   @ApiResponse({ status: 200, type: ProjectResponse })
+  @ApiBearerAuth()
+  @UseGuards(AuthUserGuard)
   @ApiBadRequestResponse({ description: 'bad request' })
   @ApiInternalServerErrorResponse({
     description: 'Internal Server Error response',
   })
-  @ApiParam({name: 'id', example: 123, description: 'project id'})
+  @ApiParam({ name: 'id', example: 123, description: 'project id' })
   async update(
+    @Request() req: any,
     @Param('id') id: string,
     @Body() UpdateProjectDto: UpdateProjectDto,
-  ): Promise<ProjectResponse>{
-try{
-  const response = await this.ProjectService.update(id, UpdateProjectDto)
-  return response
-}catch(error){
-  console.error(error);
-  throw new NotFoundException(error);
-}
-}
+  ): Promise<ProjectResponse> {
+    try {
+      const response = await this.ProjectService.update(id, UpdateProjectDto)
+      return response
+    } catch (error) {
+      console.error(error);
+      throw new NotFoundException(error);
+    }
+  }
 }
