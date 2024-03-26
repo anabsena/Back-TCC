@@ -18,18 +18,18 @@ export class AuthController {
     })
     @ApiQuery({
         example: 'Ana',
-        name: 'name',
+        name: 'email',
         required: true,
     })
     @ApiQuery({
-        example: '<PASSWORD>',
+        example: 'password',
         name: 'password',
         required: true,
     })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
-    async login(@Query('name') name: string, @Query('password') password: string): Promise<Object> {
+    async login(@Query('email') email: string, @Query('password') password: string): Promise<Object> {
         try {
-            return this.authService.login(name, password);
+            return this.authService.login(email, password);
         } catch (error) {
             if (error instanceof UnauthorizedException) {
                 throw new UnauthorizedException();
