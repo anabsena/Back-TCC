@@ -71,15 +71,21 @@ export class UserService {
                         contains: name,
                     },
                 },
-                take: perPage,
-                skip: (page - 1) * perPage,
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                },
+                
             });
             const pageInfo = getPageInfo(totalCount, page, perPage);
-            return {
+            const response: UsersResponse = {
                 data: users,
-                pageInfo
+                pageInfo: pageInfo,
+            }
+            return response
 
-            };
+            
         } catch (error) {
             console.log(`Error finding users: ${error}`);
             throw new ConflictException(`Error finding users: ${error}`);

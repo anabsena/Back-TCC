@@ -1,9 +1,10 @@
-import { Body, ConflictException, Controller, Get, NotFoundException, Param, Patch, Post, Query } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, ConflictException, Controller, Get, NotFoundException, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { UserResponse, UsersResponse } from './dto/get-user.dto';
 import { createUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthUserGuard } from '../auth-modules/auth/auth-user.guard';
 
 @ApiTags('user')
 @Controller('user')
@@ -33,8 +34,9 @@ export class UserController {
 
   }
   @Get('/user') 
+  @ApiBearerAuth()
+  @UseGuards(AuthUserGuard)
   @ApiOperation({ summary: 'Get all users' })
-  
   @ApiResponse({ status: 200, type: UsersResponse })
   @ApiBadRequestResponse({ description: 'bad request' })
   @ApiInternalServerErrorResponse({

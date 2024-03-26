@@ -61,8 +61,6 @@ export class ProjectService {
                         contains: especificDetails,
                     },
                 },
-                take: perPage,
-                skip: (page - 1) * perPage,
             });
             const pageInfo = getPageInfo(totalCount, page, perPage);
 
