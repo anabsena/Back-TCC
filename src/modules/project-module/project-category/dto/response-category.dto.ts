@@ -14,6 +14,11 @@ export class ResponseCategoryDto {
     })
     name: string;
     @ApiProperty({
+        example: "Residenciais",
+        description: "Nome da categoria"
+    })
+    description: string;
+    @ApiProperty({
         type: () => [ResponseProjectDto]
     })
     Project?: ResponseProjectDto[];

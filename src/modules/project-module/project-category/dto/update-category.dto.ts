@@ -8,4 +8,10 @@ export class UpdateCategoryDto{
         required: false
     })
     name?: string;
+    @ApiProperty({
+        example: "Residenciais",
+        description: "Nome da categoria",
+        required: false
+    })
+    description?: string;
 } 

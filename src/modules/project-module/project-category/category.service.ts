@@ -36,18 +36,19 @@ export class CategoryService {
         }
     }
     async findAll(name?: string, page?: number,
-        perPage?: number, ): Promise<CategorysResponse> {
+        perPage?: number, description?: string ): Promise<CategorysResponse> {
             try {
                 const where: Prisma.ProjectCategoryWhereInput = {}
                 const totalCount = await this.prisma.projectCategory.count({ where });
                 const projectsCategory = await this.prisma.projectCategory.findMany({
                     where: {
                         name: {
-                            contains: name,
+                            contains: name
+                        },
+                        description: {
+                            contains: description
                         }
-                    },
-                    take: perPage,
-                    skip: (page - 1) * perPage,
+                    }
                 });
                 const pageInfo = getPageInfo(totalCount, page, perPage);
     

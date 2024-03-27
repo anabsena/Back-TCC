@@ -29,9 +29,10 @@ model ProjectPhotos {
 }
 
 model ProjectCategory {
-  id      String    @id @default(uuid())
-  name    String
-  Project Project[]
+  id          String    @id @default(uuid())
+  name        String
+  description String?  @default("")
+  Project     Project[]
 }
 
 model User {

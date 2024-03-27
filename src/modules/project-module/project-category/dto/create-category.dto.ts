@@ -8,6 +8,12 @@ export class createCategoryDto {
         required: true
     })
     name: string;
+    @ApiProperty({
+        example: "Resideenciais consiste na criação de projetos para moradia",
+        description: "Descrição da categoria",
+        required: true
+    })
+    description: string;
 
 
 } 
