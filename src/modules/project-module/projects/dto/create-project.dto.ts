@@ -22,5 +22,11 @@ export class createProjectDto {
         required: true
     })
     especificDetails: string;
+    @ApiProperty({
+        example: "1234",
+        description: "id da categoria",
+        required: true
+    })
+    projectCategoryId: string;
 
 } 
