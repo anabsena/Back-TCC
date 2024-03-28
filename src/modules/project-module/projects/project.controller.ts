@@ -53,11 +53,11 @@ export class ProjectController {
   @ApiQuery({ name: 'especificDetails', required: false, example: '1 sala, 1 banheiro' })
   async findAll(
     @Request() req: any,
-    @Query('name') name: string,
-    @Query('page') page: number,
-    @Query('perPage') perPage: number,
-    @Query('description') description: string,
-    @Query('especificDetails') especificDetails: string,
+    @Query('name') name?: string,
+    @Query('especificDetails') especificDetails?: string,
+    @Query('description') description?: string,
+    @Query('page') page = 1,
+    @Query('perPage') perPage = 10,
   ): Promise<ProjectsResponse> {
     try {
       const response = await this.ProjectService.findAll(name, description, especificDetails, page, perPage);

@@ -52,6 +52,7 @@ export class UserService {
             const userResponse: UserResponse = {
                 id: newUser.id,
                 name: newUser.name,
+                email: newUser.email,
             };
 
             return userResponse;

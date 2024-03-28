@@ -14,14 +14,16 @@ export class PhotoService {
     async create(createPhotoDto: createPhotoDto): Promise<PhotoResponse> {
         try {
             const { photo, projectId } = createPhotoDto
-            const projectExists = await this.prisma.projectPhotos.findFirst({
+            const projectExists = await this.prisma.project.findFirst({
                 where: {
-                    projectId: createPhotoDto.projectId
+                    id: createPhotoDto.projectId
                 }
             })
-            if (projectExists) {
-                throw new Error('project already exists')
+           
+            if (!projectExists) {
+                throw new Error('project not exists')
             }
+            
             const newPhoto = await this.prisma.projectPhotos.create({
                 data: {
                     projectId: projectId,

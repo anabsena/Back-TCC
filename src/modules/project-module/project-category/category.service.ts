@@ -67,7 +67,13 @@ export class CategoryService {
                     where: {
                        id:String(id),
                     },
-                   
+                    include: {
+                        Project: {
+                            include: {
+                                ProjectPhotos: true,
+                            },
+                        },
+                    },
                 });
     
                 return projectCategory

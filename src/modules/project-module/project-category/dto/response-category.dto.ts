@@ -19,7 +19,8 @@ export class ResponseCategoryDto {
     })
     description: string;
     @ApiProperty({
-        type: () => [ResponseProjectDto]
+        type: () => [ResponseProjectDto],
+        description: "Projetos associados à categoria"
     })
     Project?: ResponseProjectDto[];
 

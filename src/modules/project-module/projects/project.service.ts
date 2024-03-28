@@ -13,7 +13,7 @@ export class ProjectService {
     constructor(private prisma: PrismaService) { }
     async create(userId: string, createProjectDto: createProjectDto): Promise<ProjectResponse> {
         try {
-            const { name, description, especificDetails } = createProjectDto
+            const { name, description, especificDetails, projectCategoryId } = createProjectDto
             const projectExists = await this.prisma.project.findFirst({
                 where: {
                     name: createProjectDto.name
@@ -27,7 +27,7 @@ export class ProjectService {
                     name: name,
                     description: description,
                     especificDetails: especificDetails,
-                    projectCategoryId: '531bb105-27a1-4198-9f2e-e0ba1689c0fb',
+                    projectCategoryId: projectCategoryId,
                     userId: userId,
                 },
             });
@@ -36,6 +36,7 @@ export class ProjectService {
                 name: newProject.name,
                 description: newProject.description,
                 especificDetails: newProject.especificDetails,
+                projectCategoryId: projectCategoryId,
             };
 
             return projectResponse;
@@ -44,7 +45,7 @@ export class ProjectService {
             throw new ConflictException(`Error creating Project: ${error}`);
         }
     }
-    async findAll(name: string, description: string, especificDetails: string, page?: number,
+    async findAll(name?: string, description?: string, especificDetails?: string, page?: number,
         perPage?: number,): Promise<ProjectsResponse> {
         try {
             const where: Prisma.ProjectWhereInput = {}
@@ -61,6 +62,11 @@ export class ProjectService {
                         contains: especificDetails,
                     },
                 },
+                take: Number(perPage),
+                skip: (page - 1) * perPage,
+                include: {
+                    ProjectPhotos: true,
+                }
             });
             const pageInfo = getPageInfo(totalCount, page, perPage);
 
@@ -79,7 +85,6 @@ export class ProjectService {
                 where: {
                     id: String(id),
                 },
-
             });
 
             return project

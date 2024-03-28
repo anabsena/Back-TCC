@@ -23,8 +23,15 @@ export class ResponseProjectDto{
         description: "Detalhes do projeto"
     })
     especificDetails: string;
+    
+    @ApiProperty({
+        example: "1234",
+        description: "Categoria id"
+    })
+    projectCategoryId: string;
+
     @ApiProperty({
         type: () => [ResponsePhotoDto]
     })
-    Photo?: ResponsePhotoDto[];
+    ProjectPhotos?: ResponsePhotoDto[];
 } 
