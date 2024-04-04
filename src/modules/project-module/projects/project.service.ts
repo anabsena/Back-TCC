@@ -14,20 +14,27 @@ export class ProjectService {
     async create(userId: string, createProjectDto: createProjectDto): Promise<ProjectResponse> {
         try {
             const { name, description, especificDetails, projectCategoryId } = createProjectDto
+
+            console.log(userId)
+
             const projectExists = await this.prisma.project.findFirst({
                 where: {
-                    name: createProjectDto.name
+                    name,
                 }
             })
-            if (projectExists) {
+
+            console.log(projectCategoryId)
+
+            if (projectExists !== null) {
                 throw new Error('Project already exists')
             }
+
             const newProject = await this.prisma.project.create({
                 data: {
                     name: name,
                     description: description,
                     especificDetails: especificDetails,
-                    projectCategoryId: projectCategoryId,
+                    projectCategoryId: '420003d2-c12f-4da1-ad4d-ad8a7c658c62',
                     userId: userId,
                 },
             });
@@ -49,6 +56,9 @@ export class ProjectService {
         perPage?: number,): Promise<ProjectsResponse> {
         try {
             const where: Prisma.ProjectWhereInput = {}
+
+            console.log(name, description, especificDetails, page, perPage)
+
             const totalCount = await this.prisma.project.count({ where });
             const projects = await this.prisma.project.findMany({
                 where: {

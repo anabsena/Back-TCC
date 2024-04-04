@@ -10,86 +10,91 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export class CategoryService {
 
 
-    constructor (private prisma: PrismaService){}
+    constructor(private prisma: PrismaService) { }
     async create(createCategoryDto: createCategoryDto): Promise<CategoryResponse> {
-        try{
-            const {name} = createCategoryDto
+        try {
+            const { name, description } = createCategoryDto
             const categoryExists = await this.prisma.projectCategory.findFirst({
                 where: {
-                    name: createCategoryDto.name
+                    name,
                 }
             })
-            if(categoryExists){
+
+            if (categoryExists) {
                 throw new Error('Category already exists')
             }
+
             const newCategory = await this.prisma.projectCategory.create({
                 data: {
-                    name: name,
+                    name,
+                    description
                 },
             });
-           
-    
+
+
             return newCategory;
-        }catch(error){
+        } catch (error) {
             console.log(`Error creating Category: ${error}`);
             throw new ConflictException(`Error creating Category: ${error}`);
         }
     }
     async findAll(name?: string, page?: number,
-        perPage?: number, description?: string ): Promise<CategorysResponse> {
-            try {
-                const where: Prisma.ProjectCategoryWhereInput = {}
-                const totalCount = await this.prisma.projectCategory.count({ where });
-                const projectsCategory = await this.prisma.projectCategory.findMany({
-                    where: {
-                        name: {
-                            contains: name
-                        },
-                        description: {
-                            contains: description
-                        }
+        perPage?: number, description?: string): Promise<CategorysResponse> {
+        try {
+            const where: Prisma.ProjectCategoryWhereInput = {}
+            const totalCount = await this.prisma.projectCategory.count({ where });
+            const projectsCategory = await this.prisma.projectCategory.findMany({
+                where: {
+                    name: {
+                        contains: name
+                    },
+                    description: {
+                        contains: description
                     }
-                });
-                const pageInfo = getPageInfo(totalCount, page, perPage);
-    
-                return {
-                    data: projectsCategory,
-                    pageInfo,
-                };
-            } catch (error) {
-                console.log(`Error finding Categorys: ${error}`);
-                throw new ConflictException(`Error finding Categorys: ${error}`);
-            }
+                },
+                take: Number(perPage),
+                skip: (page - 1) * perPage
+            });
+            const pageInfo = getPageInfo(totalCount, page, perPage);
+
+            return {
+                data: projectsCategory,
+                pageInfo,
+            };
+        } catch (error) {
+            console.log(`Error finding Categorys: ${error}`);
+            throw new ConflictException(`Error finding Categorys: ${error}`);
+        }
     }
     async findOne(id: string): Promise<CategoryResponse> {
-            try {
-                const projectCategory = await this.prisma.projectCategory.findUnique({
-                    where: {
-                       id:String(id),
-                    },
-                    include: {
-                        Project: {
-                            include: {
-                                ProjectPhotos: true,
-                            },
+        try {
+            const projectCategory = await this.prisma.projectCategory.findUnique({
+                where: {
+                    id: String(id),
+                },
+                include: {
+                    Project: {
+                        include: {
+                            ProjectPhotos: true,
                         },
                     },
-                });
-    
-                return projectCategory
-            } catch (error) {
-                console.log(`Error finding Category: ${error}`);
-                throw new ConflictException(`Error finding Category: ${error}`);
-            }
+                },
+            });
+
+            return projectCategory
+        } catch (error) {
+            console.log(`Error finding Category: ${error}`);
+            throw new ConflictException(`Error finding Category: ${error}`);
+        }
     }
     async update(
         id: string,
         UpdateCategoryDto: UpdateCategoryDto,
-    ): Promise<CategoryResponse>{
-        try{
-            const {name} = UpdateCategoryDto
+    ): Promise<CategoryResponse> {
+        try {
+            const { name } = UpdateCategoryDto
             const projectCategoryExists = await this.findOne(id);
-            if(!projectCategoryExists){
+            if (!projectCategoryExists) {
                 throw new NotFoundException('Product not found');
             }
             const updatedProjectCategory = await this.prisma.projectCategory.update({
@@ -101,9 +106,9 @@ export class CategoryService {
                 },
             });
             return updatedProjectCategory
-    } catch(error){
-        console.log(`Error updating Category: ${error}`);
-        throw new Error(`Error updating Category: ${error}`);
+        } catch (error) {
+            console.log(`Error updating Category: ${error}`);
+            throw new Error(`Error updating Category: ${error}`);
+        }
     }
-}
 }
