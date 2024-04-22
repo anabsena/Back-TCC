@@ -1,10 +1,11 @@
-import { Body, ConflictException, Controller, Get, NotFoundException, Param, Patch, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBody, ApiConsumes, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, ConflictException, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PhotoService } from './photo.service';
 import { PhotoResponse, PhotosResponse } from './dto/get-photo.dto';
 import { createPhotoDto } from './dto/create-photo.dto';
 import { UpdatePhotoDto } from './dto/update-photo.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthUserGuard } from 'src/modules/auth-modules/auth/auth-user.guard';
 
 @ApiTags('Photo')
 @Controller('photo')
@@ -116,4 +117,20 @@ export class PhotoController {
       throw new NotFoundException(error);
     }
   }
+  @Delete('/user/:id')
+    @ApiBearerAuth()
+    @UseGuards(AuthUserGuard)
+    @ApiOperation({ summary: 'Delete a photo' })
+    @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+    @ApiParam({ name: 'id', type: 'string' })
+    async delete(
+        @Param('id') id: string,
+    ): Promise<void> {
+        try {
+            await this.PhotoService.delete(id);
+        } catch (error) {
+            console.log(error);
+            throw new ConflictException(error);
+        }
+    }
 }

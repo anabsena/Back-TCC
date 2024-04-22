@@ -140,4 +140,23 @@ export class UserService {
             throw new Error(`Error updating user: ${error}`);
         }
     }
+    async delete(id: string): Promise<void> {
+        try {
+            // Verifica se a fazenda existe
+            const user = await this.prisma.user.findUnique({
+                where: { id },
+            });
+            if (!user) {
+                throw new NotFoundException(`User not found with id ${id}`);
+            }
+
+            // Deleta a fazenda
+            await this.prisma.user.delete({
+                where: { id },
+            });
+        } catch (error) {
+            console.log(`DELETE USER ERROR: ${error}`);
+            throw new ConflictException(`Error deleting user: ${error}`);
+        }
+    }
 }

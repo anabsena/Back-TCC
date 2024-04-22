@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, Get, NotFoundException, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, ConflictException, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { UserResponse, UsersResponse } from './dto/get-user.dto';
@@ -103,4 +103,20 @@ try{
   throw new NotFoundException(error);
 }
 }
+@Delete('/user/:id')
+    @ApiBearerAuth()
+    @UseGuards(AuthUserGuard)
+    @ApiOperation({ summary: 'Delete a user' })
+    @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+    @ApiParam({ name: 'id', type: 'string' })
+    async delete(
+        @Param('id') id: string,
+    ): Promise<void> {
+        try {
+            await this.UserService.delete(id);
+        } catch (error) {
+            console.log(error);
+            throw new ConflictException(error);
+        }
+    }
 }

@@ -20,4 +20,4 @@ export class ResponseUserDto {
         required: true
     })
     email: string;
-} 
+}

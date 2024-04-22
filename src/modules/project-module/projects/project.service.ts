@@ -57,7 +57,7 @@ export class ProjectService {
         try {
             const where: Prisma.ProjectWhereInput = {}
 
-            console.log(name, description, especificDetails, page, perPage)
+            
 
             const totalCount = await this.prisma.project.count({ where });
             const projects = await this.prisma.project.findMany({
@@ -95,6 +95,9 @@ export class ProjectService {
                 where: {
                     id: String(id),
                 },
+                include: {
+                    ProjectPhotos: true,
+                }
             });
 
             return project
@@ -129,4 +132,24 @@ export class ProjectService {
             throw new Error(`Error updating Project: ${error}`);
         }
     }
+    async delete(id: string): Promise<void> {
+        try {
+            // Verifica se a fazenda existe
+            const project = await this.prisma.project.findUnique({
+                where: { id },
+            });
+            if (!project) {
+                throw new NotFoundException(`Project not found with id ${id}`);
+            }
+
+            // Deleta a fazenda
+            await this.prisma.project.delete({
+                where: { id },
+            });
+        } catch (error) {
+            console.log(`DELETE PROJECT ERROR: ${error}`);
+            throw new ConflictException(`Error deleting project: ${error}`);
+        }
+    }
+    
 }

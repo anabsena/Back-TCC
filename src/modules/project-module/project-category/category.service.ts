@@ -111,4 +111,21 @@ export class CategoryService {
             throw new Error(`Error updating Category: ${error}`);
         }
     }
+    async delete(id: string): Promise<void> {
+        try {
+            // Verifica se a fazenda existe
+            const projectCategory = await this.prisma.projectCategory.findUnique({
+                where: { id },
+            });
+            if (!projectCategory) {
+                throw new NotFoundException(`Category not found with id ${id}`);
+            }
+            await this.prisma.projectCategory.delete({
+                where: { id },
+            });
+        } catch (error) {
+            console.log(`DELETE CATEGORY ERROR: ${error}`);
+            throw new ConflictException(`Error deleting projectCategory: ${error}`);
+        }
+    }
 }

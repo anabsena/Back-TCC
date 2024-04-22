@@ -105,4 +105,21 @@ export class PhotoService {
             throw new Error(`Error updating Photos: ${error}`);
         }
     }
+    async delete(id: string): Promise<void> {
+        try {
+            // Verifica se a fazenda existe
+            const projectPhotos = await this.prisma.projectPhotos.findUnique({
+                where: { id },
+            });
+            if (!projectPhotos) {
+                throw new NotFoundException(`Photo not found with id ${id}`);
+            }
+            await this.prisma.projectCategory.delete({
+                where: { id },
+            });
+        } catch (error) {
+            console.log(`DELETE PHOTO ERROR: ${error}`);
+            throw new ConflictException(`Error deleting projectPhotos: ${error}`);
+        }
+    }
 }

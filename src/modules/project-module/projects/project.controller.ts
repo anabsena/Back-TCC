@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, Get, NotFoundException, Param, Patch, Post, Query, UseGuards, Request } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, NotFoundException, Param, Patch, Post, Query, UseGuards, Request, Delete } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { createProjectDto } from './dto/create-project.dto';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -116,4 +116,20 @@ export class ProjectController {
       throw new NotFoundException(error);
     }
   }
+  @Delete('/project/:id')
+    @ApiBearerAuth()
+    @UseGuards(AuthUserGuard)
+    @ApiOperation({ summary: 'Delete a project' })
+    @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+    @ApiParam({ name: 'id', type: 'string' })
+    async delete(
+        @Param('id') id: string,
+    ): Promise<void> {
+        try {
+            await this.ProjectService.delete(id);
+        } catch (error) {
+            console.log(error);
+            throw new ConflictException(error);
+        }
+    }
 }
