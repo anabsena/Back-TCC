@@ -117,7 +117,7 @@ export class PhotoController {
       throw new NotFoundException(error);
     }
   }
-  @Delete('/user/:id')
+  @Delete('/photo/:id')
     @ApiBearerAuth()
     @UseGuards(AuthUserGuard)
     @ApiOperation({ summary: 'Delete a photo' })

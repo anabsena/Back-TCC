@@ -114,7 +114,7 @@ export class PhotoService {
             if (!projectPhotos) {
                 throw new NotFoundException(`Photo not found with id ${id}`);
             }
-            await this.prisma.projectCategory.delete({
+            await this.prisma.projectPhotos.delete({
                 where: { id },
             });
         } catch (error) {
