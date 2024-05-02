@@ -8,37 +8,55 @@ datasource db {
 }
 
 model Project {
-  id                String          @id @default(uuid())
+  id                String   @id @default(uuid())
   userId            String
   name              String
   description       String
   especificDetails  String
   projectCategoryId String
-  user              User?           @relation(fields: [userId], references: [id])
-  projectCategory   ProjectCategory @relation(fields: [projectCategoryId], references: [id])
-  ProjectPhotos     ProjectPhotos[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  @@map("projcts")
+  user            User?           @relation(fields: [userId], references: [id])
+  projectCategory ProjectCategory @relation(fields: [projectCategoryId], references: [id])
+  ProjectPhotos   ProjectPhotos[]
+
+  @@map("projects")
 }
 
 model ProjectPhotos {
-  id        String  @id @default(uuid())
+  id        String   @id @default(uuid())
   projectId String
-  project   Project @relation(fields: [projectId], references: [id])
   photos    Bytes
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id])
+
+  @@map("projects_photos")
 }
 
 model ProjectCategory {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   description String?  @default("")
-  Project     Project[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  Project Project[]
+
+  @@map("projects_categorys")
 }
 
 model User {
-  id       String    @id @default(uuid())
-  name     String
-  email    String?   @unique
-  password String
-  Project  Project[]
+  id        String   @id @default(uuid())
+  name      String
+  email     String?  @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Project Project[]
+
+  @@map("users")
 }

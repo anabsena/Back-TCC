@@ -50,6 +50,7 @@ export class PhotoService {
                 },
                 take: perPage,
                 skip: (page - 1) * perPage,
+                orderBy: { createdAt: 'desc' },
             });
             const pageInfo = getPageInfo(totalCount, page, perPage);
 

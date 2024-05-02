@@ -37,6 +37,7 @@ export class ProjectService {
                     projectCategoryId: '420003d2-c12f-4da1-ad4d-ad8a7c658c62',
                     userId: userId,
                 },
+
             });
             const projectResponse: ProjectResponse = {
                 id: newProject.id,
@@ -57,7 +58,7 @@ export class ProjectService {
         try {
             const where: Prisma.ProjectWhereInput = {}
 
-            
+
 
             const totalCount = await this.prisma.project.count({ where });
             const projects = await this.prisma.project.findMany({
@@ -74,6 +75,7 @@ export class ProjectService {
                 },
                 take: Number(perPage),
                 skip: (page - 1) * perPage,
+                orderBy: { createdAt: 'desc' },
                 include: {
                     ProjectPhotos: true,
                 }
@@ -146,10 +148,16 @@ export class ProjectService {
             await this.prisma.project.delete({
                 where: { id },
             });
+
+            await this.prisma.projectPhotos.deleteMany({
+                where: {
+                    projectId: id
+                }
+            })
         } catch (error) {
             console.log(`DELETE PROJECT ERROR: ${error}`);
             throw new ConflictException(`Error deleting project: ${error}`);
         }
     }
-    
+
 }

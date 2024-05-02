@@ -77,7 +77,8 @@ export class UserService {
                     name: true,
                     email: true,
                 },
-                
+                orderBy: { createdAt: 'desc' },
+
             });
             const pageInfo = getPageInfo(totalCount, page, perPage);
             const response: UsersResponse = {
@@ -86,7 +87,7 @@ export class UserService {
             }
             return response
 
-            
+
         } catch (error) {
             console.log(`Error finding users: ${error}`);
             throw new ConflictException(`Error finding users: ${error}`);

@@ -29,6 +29,7 @@ export class CategoryService {
                     name,
                     description
                 },
+
             });
 
 
@@ -53,7 +54,8 @@ export class CategoryService {
                     }
                 },
                 take: Number(perPage),
-                skip: (page - 1) * perPage
+                skip: (page - 1) * perPage,
+                orderBy: { createdAt: 'desc' },
             });
             const pageInfo = getPageInfo(totalCount, page, perPage);
 
