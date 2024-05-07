@@ -14,27 +14,14 @@ export class ProjectService {
     async create(userId: string, createProjectDto: createProjectDto): Promise<ProjectResponse> {
         try {
             const { name, description, especificDetails, projectCategoryId } = createProjectDto
-
-            console.log(userId)
-
-            const projectExists = await this.prisma.project.findFirst({
-                where: {
-                    name,
-                }
-            })
-
-            console.log(projectCategoryId)
-
-            if (projectExists !== null) {
-                throw new Error('Project already exists')
-            }
+            
 
             const newProject = await this.prisma.project.create({
                 data: {
                     name: name,
                     description: description,
                     especificDetails: especificDetails,
-                    projectCategoryId: '420003d2-c12f-4da1-ad4d-ad8a7c658c62',
+                    projectCategoryId: projectCategoryId,
                     userId: userId,
                 },
 
