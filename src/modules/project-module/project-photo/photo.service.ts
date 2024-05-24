@@ -5,12 +5,14 @@ import { getPageInfo } from 'src/utils/pageInfo';
 import { createPhotoDto } from './dto/create-photo.dto';
 import { PhotoResponse, PhotosResponse } from './dto/get-photo.dto';
 import { UpdatePhotoDto } from './dto/update-photo.dto';
+import { randomUUID } from 'crypto';
+import { StorageService, StorageServiceType } from 'src/services/storage.service';
 
 @Injectable()
 export class PhotoService {
 
 
-    constructor(private prisma: PrismaService) { }
+    constructor(private prisma: PrismaService, private readonly storageService: StorageService) { }
     async create(createPhotoDto: createPhotoDto): Promise<PhotoResponse> {
         try {
             const { photo, projectId } = createPhotoDto
@@ -19,15 +21,30 @@ export class PhotoService {
                     id: createPhotoDto.projectId
                 }
             })
-           
+
             if (!projectExists) {
                 throw new Error('project not exists')
             }
-            
+
+            const currentDate = new Date();
+            const year = currentDate.getFullYear().toString();
+            const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            const day = currentDate.getDate().toString().padStart(2, '0');
+
+            const uniqueFilename = `${randomUUID()}-${photo.originalname}`;
+            const photoPath = `${year}/${month}/${day}/${uniqueFilename}`;
+
+            this.storageService.uploadFile(
+                StorageServiceType.S3,
+                photoPath,
+                photo.buffer,
+            );
+
+
             const newPhoto = await this.prisma.projectPhotos.create({
                 data: {
                     projectId: projectId,
-                    photos: photo.buffer,
+                    photoUrl: photoPath,
                 },
             });
 
@@ -37,6 +54,7 @@ export class PhotoService {
             throw new ConflictException(`Error creating Photo: ${error}`);
         }
     }
+
     async findAll(projectId?: string, page?: number,
         perPage?: number,): Promise<PhotosResponse> {
         try {
@@ -63,6 +81,7 @@ export class PhotoService {
             throw new ConflictException(`Error finding Photos: ${error}`);
         }
     }
+
     async findOne(id: string): Promise<PhotoResponse> {
         try {
             const projectPhotos = await this.prisma.projectPhotos.findUnique({
@@ -78,6 +97,7 @@ export class PhotoService {
             throw new ConflictException(`Error finding Category: ${error}`);
         }
     }
+
     async update(
         id: string,
         UpdatePhotoDto: UpdatePhotoDto,
@@ -91,13 +111,31 @@ export class PhotoService {
                 throw new NotFoundException('Product not found');
             }
 
+            let photoPath = null
+
+            if (photos) {
+                const currentDate = new Date();
+                const year = currentDate.getFullYear().toString();
+                const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+                const day = currentDate.getDate().toString().padStart(2, '0');
+
+                const uniqueFilename = `${randomUUID()}-${photos.originalname}`;
+                photoPath = `${year}/${month}/${day}/${uniqueFilename}`;
+
+                this.storageService.uploadFile(
+                    StorageServiceType.S3,
+                    photoPath,
+                    photos.buffer,
+                );
+            }
+
             const updatedProjectPhotos = await this.prisma.projectPhotos.update({
                 where: {
                     id: id,
                 },
                 data: {
                     projectId: projectId ? projectId : projectPhotosExists.projectId,
-                    photos: photos.buffer
+                    photoUrl: photoPath ? photoPath : projectPhotosExists.photoUrl,
                 },
             });
             return updatedProjectPhotos
@@ -106,6 +144,7 @@ export class PhotoService {
             throw new Error(`Error updating Photos: ${error}`);
         }
     }
+
     async delete(id: string): Promise<void> {
         try {
             // Verifica se a fazenda existe

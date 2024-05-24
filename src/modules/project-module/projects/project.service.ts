@@ -14,7 +14,9 @@ export class ProjectService {
     async create(userId: string, createProjectDto: createProjectDto): Promise<ProjectResponse> {
         try {
             const { name, description, especificDetails, projectCategoryId } = createProjectDto
-            
+
+                console.log(createProjectDto)
+
 
             const newProject = await this.prisma.project.create({
                 data: {
@@ -26,6 +28,7 @@ export class ProjectService {
                 },
 
             });
+
             const projectResponse: ProjectResponse = {
                 id: newProject.id,
                 name: newProject.name,
