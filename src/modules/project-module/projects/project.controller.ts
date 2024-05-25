@@ -40,8 +40,6 @@ export class ProjectController {
   @ApiOperation({ summary: 'Get all projects' })
 
   @ApiResponse({ status: 200, type: ProjectsResponse })
-  @ApiBearerAuth()
-  @UseGuards(AuthUserGuard)
   @ApiBadRequestResponse({ description: 'bad request' })
   @ApiInternalServerErrorResponse({
     description: 'Internal Server Error response',
