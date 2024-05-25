@@ -6,7 +6,12 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
+  app.enableCors({
+    origin: 'https://projetar-mais.vercel.app', // Substitua pelo domínio do seu frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true, // Se precisar suportar cookies ou autenticação baseada em sessão
+  });
+
   app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
