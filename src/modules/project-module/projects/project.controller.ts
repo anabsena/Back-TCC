@@ -11,7 +11,28 @@ import { AuthUserGuard } from 'src/modules/auth-modules/auth/auth-user.guard';
 
 export class ProjectController {
   constructor(private ProjectService: ProjectService) { }
+  @Get('/project/:id')
+  @ApiOperation({ summary: 'Get all projects' })
+  @ApiResponse({ status: 200, type: ProjectsResponse })
+  @ApiBadRequestResponse({ description: 'bad request' })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal Server Error response',
+  })
+  @ApiParam({ name: 'id', example: 123, description: 'project id' })
+  async findOne(
+    @Request() req: any,
+    @Param('id') id: string
+  ): Promise<ProjectResponse> {
+    try {
+      const response = await this.ProjectService.findOne(id);
 
+      return response
+    } catch (error) {
+      console.log(`Error finding Project: ${error}`);
+      throw new NotFoundException(`Error finding Project: ${error}`);
+    }
+
+  }
   @Post('/project')
   @ApiBearerAuth()
   @UseGuards(AuthUserGuard)
@@ -67,30 +88,7 @@ export class ProjectController {
     }
 
   }
-  @Get('/project/:id')
-  @ApiOperation({ summary: 'Get all projects' })
-  @ApiBearerAuth()
-  @UseGuards(AuthUserGuard)
-  @ApiResponse({ status: 200, type: ProjectsResponse })
-  @ApiBadRequestResponse({ description: 'bad request' })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal Server Error response',
-  })
-  @ApiParam({ name: 'id', example: 123, description: 'project id' })
-  async findOne(
-    @Request() req: any,
-    @Param('id') id: string
-  ): Promise<ProjectResponse> {
-    try {
-      const response = await this.ProjectService.findOne(id);
 
-      return response
-    } catch (error) {
-      console.log(`Error finding Project: ${error}`);
-      throw new NotFoundException(`Error finding Project: ${error}`);
-    }
-
-  }
   @Patch('/project/:id')
   @ApiOperation({ summary: 'Update a project' })
   @ApiResponse({ status: 200, type: ProjectResponse })
@@ -115,19 +113,19 @@ export class ProjectController {
     }
   }
   @Delete('/project/:id')
-    @ApiBearerAuth()
-    @UseGuards(AuthUserGuard)
-    @ApiOperation({ summary: 'Delete a project' })
-    @ApiInternalServerErrorResponse({ description: 'Internal server error' })
-    @ApiParam({ name: 'id', type: 'string' })
-    async delete(
-        @Param('id') id: string,
-    ): Promise<void> {
-        try {
-            await this.ProjectService.delete(id);
-        } catch (error) {
-            console.log(error);
-            throw new ConflictException(error);
-        }
+  @ApiBearerAuth()
+  @UseGuards(AuthUserGuard)
+  @ApiOperation({ summary: 'Delete a project' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  @ApiParam({ name: 'id', type: 'string' })
+  async delete(
+    @Param('id') id: string,
+  ): Promise<void> {
+    try {
+      await this.ProjectService.delete(id);
+    } catch (error) {
+      console.log(error);
+      throw new ConflictException(error);
     }
+  }
 }
