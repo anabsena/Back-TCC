@@ -1,6 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { ConfigService } from '@nestjs/config';
+import * as sharp from 'sharp';
 
 export enum StorageServiceType {
   S3 = 'S3',
@@ -73,10 +74,15 @@ export class StorageService {
     body: Buffer,
   ): Promise<void> {
     try {
+      const compressedBuffer = await sharp(body.buffer)
+        .resize({ width: 800 }) // Redimensiona a imagem para largura de 800px, mantendo a proporção
+        .jpeg({ quality: 80 }) // Converte para JPEG com qualidade de 80%
+        .toBuffer();
+
       const uploadParams: AWS.S3.PutObjectRequest = {
         Bucket: bucket,
         Key: key,
-        Body: body,
+        Body: compressedBuffer,
         ACL: 'public-read',
       };
 
