@@ -17,5 +17,5 @@ export class ResponsePhotoDto {
     example: 'base 64 image',
     description: 'photo',
   })
-  photoUrl: string;
+  photos: Buffer;
 }

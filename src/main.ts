@@ -2,17 +2,25 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { json, urlencoded } from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+ app.enableCors({
+  origin: [
+    'https://www.projetarmais.com.br',
+    'https://projetarmais.com.br',
+    'https://projetarmaisarq.com',
+    'https://projetarmaisarq.com.br',
+    'https://www.projetarmaisarq.com.br',
+    'https://www.projetarmaisarq.com',
+  ],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+});
 
-  app.enableCors();
-
-  app.use(json({ limit: '100mb' }));
-  app.use(urlencoded({ limit: '100mb', extended: true }));
-
+  app.setGlobalPrefix('api');
   app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
